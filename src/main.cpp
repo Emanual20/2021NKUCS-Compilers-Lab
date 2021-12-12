@@ -57,6 +57,7 @@ int main(int argc, char *argv[])
         fprintf(stderr, "%s: fail to open output file\n", outfile);
         exit(EXIT_FAILURE);
     }
+    SymbolTable::init();
     yyparse();
     if(dump_ast)
         ast.output();

@@ -18,7 +18,7 @@ SRC += $(PARSER)
 OBJ = $(SRC:$(SRC_PATH)/%.cpp=$(OBJ_PATH)/%.o)
 PARSERH ?= $(INC_PATH)/$(addsuffix .h, $(notdir $(basename $(PARSER))))
 
-TESTCASE = $(shell find $(TEST_PATH) -name "*.sy")
+TESTCASE = $(sort $(shell find $(TEST_PATH) -name "*.sy"))
 TESTCASE_NUM = $(words $(TESTCASE))
 LLVM_IR = $(addsuffix _std.ll, $(basename $(TESTCASE)))
 OUTPUT_LAB4 = $(addsuffix .toks, $(basename $(TESTCASE)))
