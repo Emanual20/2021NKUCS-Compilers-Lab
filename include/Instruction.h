@@ -98,6 +98,7 @@ public:
     void output() const;
     void setBranch(BasicBlock *);
     BasicBlock *getBranch();
+    BasicBlock **patchBranch() {return &branch;};
 protected:
     BasicBlock *branch;
 };
@@ -113,6 +114,8 @@ public:
     BasicBlock* getTrueBranch();
     void setFalseBranch(BasicBlock*);
     BasicBlock* getFalseBranch();
+    BasicBlock **truePatchBranch() {return &true_branch;};
+    BasicBlock **falsePatchBranch() {return &false_branch;};
 protected:
     BasicBlock* true_branch;
     BasicBlock* false_branch;

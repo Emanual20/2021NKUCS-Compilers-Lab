@@ -15,20 +15,15 @@ Node::Node()
     seq = counter++;
 }
 
-void Node::backPatch(std::vector<Instruction*> &list, BasicBlock*bb)
+void Node::backPatch(std::vector<BasicBlock**> &list, BasicBlock*target)
 {
-    for(auto &inst:list)
-    {
-        if(inst->isCond())
-            dynamic_cast<CondBrInstruction*>(inst)->setTrueBranch(bb);
-        else if(inst->isUncond())
-            dynamic_cast<UncondBrInstruction*>(inst)->setBranch(bb);
-    }
+    for(auto &bb:list)
+        *bb = target;
 }
 
-std::vector<Instruction*> Node::merge(std::vector<Instruction*> &list1, std::vector<Instruction*> &list2)
+std::vector<BasicBlock**> Node::merge(std::vector<BasicBlock**> &list1, std::vector<BasicBlock**> &list2)
 {
-    std::vector<Instruction*> res(list1);
+    std::vector<BasicBlock**> res(list1);
     res.insert(res.end(), list2.begin(), list2.end());
     return res;
 }
@@ -146,14 +141,10 @@ void BinaryExpr::genCode()
         new CmpInstruction(opcode, dst, src1, src2, bb);
         if(gen_br)
         {
-            Instruction *cond, *uncond;
-            BasicBlock *uncond_bb;
-            uncond_bb = new BasicBlock(func);
-            cond = new CondBrInstruction(nullptr, uncond_bb, dst, bb);    // the target basicblock is unknown.
-            uncond = new UncondBrInstruction(nullptr, uncond_bb);
-
-            true_list.push_back(cond);
-            false_list.push_back(uncond);
+            CondBrInstruction *cond;
+            cond = new CondBrInstruction(nullptr, nullptr, dst, bb);    // the target basicblock is unknown.
+            true_list.push_back(cond->truePatchBranch());
+            false_list.push_back(cond->falsePatchBranch());
         }
     }
     else if(op >= ADD && op <= MOD)
